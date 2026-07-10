@@ -138,3 +138,14 @@ export const digitalTwinApi = {
   updateWeather:    (status) =>
     apiClient.post(`/digital-twin/weather/update?status=${status}`, {}),
 };
+
+export const multiAgentApi = {
+  chat:          (message, history, memory) =>
+    apiClient.post('/multi-agent/chat', { message, history, memory }),
+  route:         (message, context) =>
+    apiClient.post('/multi-agent/route', { message, context }),
+  testIntent:    (message) =>
+    apiClient.post('/multi-agent/intent', { message }),
+  getMemory:     () => apiClient.get('/multi-agent/memory'),
+  getPrompts:    () => apiClient.get('/multi-agent/prompts'),
+};

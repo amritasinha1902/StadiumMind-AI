@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config.settings import settings
-from app.routes import fans, security, volunteers, venue, organizers, ai, accessibility, fan_copilot, digital_twin
+from app.routes import fans, security, volunteers, venue, organizers, ai, accessibility, fan_copilot, digital_twin, multi_agent
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -42,6 +42,7 @@ app.include_router(ai.router,            prefix="/ai",            tags=["AI Assi
 app.include_router(accessibility.router, prefix="/accessibility", tags=["Accessibility AI"])
 app.include_router(fan_copilot.router,   prefix="/fan-copilot",   tags=["Fan Co-pilot"])
 app.include_router(digital_twin.router,  prefix="/digital-twin",  tags=["Digital Twin Operations"])
+app.include_router(multi_agent.router,   prefix="/multi-agent",   tags=["Multi-Agent AI System"])
 
 
 @app.get("/health", tags=["System"], summary="Health check")

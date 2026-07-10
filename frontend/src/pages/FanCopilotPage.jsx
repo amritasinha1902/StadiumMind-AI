@@ -9,7 +9,7 @@ import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import Input from '@/components/ui/Input';
-import { fanCopilotApi } from '@/services/api';
+import { fanCopilotApi, multiAgentApi } from '@/services/api';
 import toast from 'react-hot-toast';
 
 const suggestedPrompts = [
@@ -38,7 +38,17 @@ export default function FanCopilotPage() {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'info'
+  const [activeTab, setActiveTab] = useState('chat'); // 'chat' | 'info' | 'dev'
+  const [telemetryData, setTelemetryData] = useState(null);
+  const [memoryContext, setMemoryContext] = useState({
+    current_gate: null,
+    seat_number: null,
+    parking_location: localStorage.getItem('nexus-parking-spot') || null,
+    accessibility_pref: null,
+    preferred_language: null,
+    food_preference: null,
+    transportation_method: null,
+  });
 
   // Preferences & Context
   const [preferences, setPreferences] = useState({
@@ -171,18 +181,37 @@ export default function FanCopilotPage() {
         content: m.content
       }));
 
-      const res = await fanCopilotApi.chat(text, history, preferences, parkingLocation);
+      const res = await multiAgentApi.chat(text, history, memoryContext);
+      
+      // Save telemetry
+      setTelemetryData({
+        intents: res.intents,
+        chosen_agents: res.chosen_agents,
+        telemetry: res.telemetry,
+        total_time_ms: res.total_time_ms,
+        confidence_score: res.confidence_score,
+      });
+
+      // Save memory context
+      if (res.memory) {
+        setMemoryContext(res.memory);
+        if (res.memory.parking_location) {
+          setParkingLocation(res.memory.parking_location);
+          localStorage.setItem('nexus-parking-spot', res.memory.parking_location);
+        }
+      }
+
       const aiMsg = {
         role: 'assistant',
         content: res.response,
-        mode: res.detected_mode,
-        suggested: res.suggested_actions,
+        mode: res.intents.includes('emergency') ? 'emergency' : 'chat',
+        suggested: [],
         timestamp: new Date()
       };
       setMessages((prev) => [...prev, aiMsg]);
 
-      if (res.detected_mode === 'emergency') {
-        toast.error("EMERGENCY MODE ACTIVATED — Stay where you are.");
+      if (res.intents.includes('emergency')) {
+        toast.error("EMERGENCY ROUTING TRIGGERED — Stay where you are.");
       }
     } catch (err) {
       toast.error("Could not reach co-pilot agent.");
@@ -210,10 +239,23 @@ export default function FanCopilotPage() {
           role: m.role === 'user' ? 'user' : 'assistant',
           content: m.content
         }));
-        const res = await fanCopilotApi.chat(lastUserQuery.content, historyMapped, preferences, parkingLocation);
+        const res = await multiAgentApi.chat(lastUserQuery.content, historyMapped, memoryContext);
+        
+        setTelemetryData({
+          intents: res.intents,
+          chosen_agents: res.chosen_agents,
+          telemetry: res.telemetry,
+          total_time_ms: res.total_time_ms,
+          confidence_score: res.confidence_score,
+        });
+
+        if (res.memory) {
+          setMemoryContext(res.memory);
+        }
+
         setMessages((prev) => [
           ...prev,
-          { role: 'assistant', content: res.response, mode: res.detected_mode, suggested: res.suggested_actions, timestamp: new Date() }
+          { role: 'assistant', content: res.response, mode: res.intents.includes('emergency') ? 'emergency' : 'chat', suggested: [], timestamp: new Date() }
         ]);
       } catch (err) {
         toast.error("Failed to regenerate response.");
@@ -228,28 +270,36 @@ export default function FanCopilotPage() {
       {/* ── Left Sidebar: Preferences & Match Info ─────────────────── */}
       <div className="w-full lg:w-80 flex flex-col gap-4 flex-shrink-0">
         <Card className="flex-1 flex flex-col">
-          <CardHeader>
-            <div className="flex gap-2">
+          <CardHeader className="p-3 border-b border-nexus-border">
+            <div className="flex gap-1 flex-wrap">
               <Button
                 variant={activeTab === 'chat' ? 'primary' : 'ghost'}
                 size="sm"
-                className="flex-1"
+                className="flex-1 text-[11px] px-2 py-1"
                 onClick={() => setActiveTab('chat')}
               >
-                Preferences
+                Prefs
               </Button>
               <Button
                 variant={activeTab === 'info' ? 'primary' : 'ghost'}
                 size="sm"
-                className="flex-1"
+                className="flex-1 text-[11px] px-2 py-1"
                 onClick={() => setActiveTab('info')}
               >
-                Match Info
+                Match
+              </Button>
+              <Button
+                variant={activeTab === 'dev' ? 'primary' : 'ghost'}
+                size="sm"
+                className="flex-1 text-[11px] px-2 py-1"
+                onClick={() => setActiveTab('dev')}
+              >
+                Dev Panel
               </Button>
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto">
-            {activeTab === 'chat' ? (
+            {activeTab === 'chat' && (
               <div className="space-y-4">
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-nexus-muted mb-2">Personalize My Guidance</h3>
@@ -309,7 +359,9 @@ export default function FanCopilotPage() {
                   )}
                 </div>
               </div>
-            ) : (
+            )}
+
+            {activeTab === 'info' && (
               <div className="space-y-4 text-sm leading-relaxed text-nexus-muted">
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-nexus-muted mb-2">Live Fixture Details</h3>
@@ -329,6 +381,93 @@ export default function FanCopilotPage() {
                 <div>
                   <h4 className="text-xs font-bold uppercase tracking-wider text-nexus-danger mb-1.5">Security Guidelines</h4>
                   <p className="text-xs">{matchesInfo.security}</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'dev' && (
+              <div className="space-y-4 text-xs text-nexus-muted leading-relaxed">
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-nexus-accent mb-2">Multi-Agent Diagnostics</h3>
+                  <div className="p-3 bg-nexus-surface2 border border-nexus-border rounded-xl space-y-2">
+                    <p className="flex justify-between">
+                      <span>Total latency:</span>
+                      <span className="font-mono text-nexus-text font-bold">
+                        {telemetryData ? `${telemetryData.total_time_ms} ms` : '0 ms'}
+                      </span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>Confidence score:</span>
+                      <span className="font-mono text-nexus-success font-bold">
+                        {telemetryData ? `${Math.round(telemetryData.confidence_score * 100)}%` : '0%'}
+                      </span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>Tokens processed:</span>
+                      <span className="font-mono text-nexus-text">1,248 (placeholder)</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-nexus-muted mb-2">Detected Intents</h4>
+                  <div className="flex flex-wrap gap-1">
+                    {telemetryData && telemetryData.intents.length > 0 ? (
+                      telemetryData.intents.map((intent) => (
+                        <Badge key={intent} variant="accent" size="sm" className="capitalize">
+                          {intent}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-[10px] text-nexus-muted">No intents detected yet</span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-nexus-muted mb-2">Selected Sub-Agents</h4>
+                  <div className="space-y-1.5">
+                    {telemetryData && telemetryData.telemetry.length > 0 ? (
+                      telemetryData.telemetry.map((tel, idx) => (
+                        <div key={idx} className="flex justify-between p-2 bg-nexus-surface border border-nexus-border rounded-lg items-center">
+                          <span className="font-semibold text-nexus-text">{tel.agent_name}</span>
+                          <span className="font-mono text-[10px] text-nexus-muted">{tel.execution_time_ms} ms</span>
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-[10px] text-nexus-muted">No agent execution history.</span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-nexus-muted mb-2">Active AI Memory Context</h4>
+                  <div className="p-3 bg-nexus-surface border border-nexus-border rounded-xl space-y-1.5 font-mono text-[10px]">
+                    <p className="flex justify-between border-b border-nexus-border/40 pb-1">
+                      <span>GATE:</span>
+                      <span className="text-nexus-text font-bold">{memoryContext?.current_gate || 'None'}</span>
+                    </p>
+                    <p className="flex justify-between border-b border-nexus-border/40 pb-1">
+                      <span>SEAT:</span>
+                      <span className="text-nexus-text font-bold">{memoryContext?.seat_number || 'None'}</span>
+                    </p>
+                    <p className="flex justify-between border-b border-nexus-border/40 pb-1">
+                      <span>PARKING:</span>
+                      <span className="text-nexus-text font-bold">{memoryContext?.parking_location || 'None'}</span>
+                    </p>
+                    <p className="flex justify-between border-b border-nexus-border/40 pb-1">
+                      <span>LANGUAGE:</span>
+                      <span className="text-nexus-text font-bold">{memoryContext?.preferred_language || 'None'}</span>
+                    </p>
+                    <p className="flex justify-between border-b border-nexus-border/40 pb-1">
+                      <span>FOOD PREF:</span>
+                      <span className="text-nexus-text font-bold">{memoryContext?.food_preference || 'None'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>TRANSIT:</span>
+                      <span className="text-nexus-text font-bold">{memoryContext?.transportation_method || 'None'}</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
