@@ -1,0 +1,3 @@
+# Static assets – images, icons, and other binary files go here.
+# Vite automatically copies everything in /public.
+# Files imported via src/ are processed and hashed by Vite's build pipeline.

@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #050A18;
+    color: #f0f6ff;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0d1b2e;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1e3a5f;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0066cc;
+  }
+}
+
+@layer components {
+  /* Glass morphism surface */
+  .nexus-glass {
+    background: rgba(13, 27, 46, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(30, 58, 95, 0.5);
+  }
+
+  /* Standard dark card */
+  .nexus-card {
+    background: linear-gradient(135deg, #0f1e35 0%, #1a2744 100%);
+    border: 1px solid rgba(30, 58, 95, 0.6);
+    border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Primary CTA button */
+  .nexus-btn-primary {
+    background: linear-gradient(135deg, #004e9a 0%, #0066cc 50%, #0088ff 100%);
+    color: #f0f6ff;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 136, 255, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .nexus-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(0, 102, 204, 0.45);
+  }
+
+  /* Accent (gold) CTA button */
+  .nexus-btn-accent {
+    background: linear-gradient(135deg, #c9a800 0%, #ffd700 50%, #ffe84d 100%);
+    color: #050a18;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .nexus-btn-accent:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.4);
+  }
+
+  /* Form input */
+  .nexus-input {
+    background: rgba(13, 27, 46, 0.85);
+    border: 1px solid rgba(30, 58, 95, 0.6);
+    border-radius: 8px;
+    color: #f0f6ff;
+    padding: 0.625rem 0.875rem;
+    width: 100%;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .nexus-input:focus {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  }
+
+  .nexus-input::placeholder {
+    color: #8899aa;
+  }
+
+  /* Gradient text utility */
+  .gradient-text {
+    background: linear-gradient(135deg, #0088ff, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glowing border */
+  .glow-border {
+    border: 1px solid rgba(0, 136, 255, 0.4);
+    box-shadow: 0 0 14px rgba(0, 136, 255, 0.15);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+}
