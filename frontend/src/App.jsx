@@ -15,6 +15,7 @@ import OrganizersPage from '@/pages/OrganizersPage';
 import AIAssistantPage from '@/pages/AIAssistantPage';
 import AccessibilityPage from '@/pages/AccessibilityPage';
 import FanCopilotPage from '@/pages/FanCopilotPage';
+import AIDigitalTwinPage from '@/pages/AIDigitalTwinPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
                 <Route path="ai-assistant" element={<AIAssistantPage />} />
                 <Route path="accessibility" element={<AccessibilityPage />} />
                 <Route path="fan-copilot" element={<FanCopilotPage />} />
+                <Route path="digital-twin" element={<AIDigitalTwinPage />} />
               </Route>
 
               {/* 404 */}

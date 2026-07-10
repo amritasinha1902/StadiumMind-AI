@@ -127,3 +127,14 @@ export const fanCopilotApi = {
   getRecommendations: (category, currentLocation, preferences) =>
     apiClient.post('/fan-copilot/recommendations', { category, current_location: currentLocation, preferences }),
 };
+
+export const digitalTwinApi = {
+  getStatus:        () => apiClient.get('/digital-twin/status'),
+  getNavigation:    (fromLoc, toLoc, preference) =>
+    apiClient.post('/digital-twin/navigation', { from_location: fromLoc, to_location: toLoc, preference }),
+  injectIncident:   () => apiClient.post('/digital-twin/incident/inject', {}),
+  assignResponder:  (incidentId, responderId, type) =>
+    apiClient.post('/digital-twin/assign-responder', { incident_id: incidentId, assigned_responder_id: responderId, responder_type: type }),
+  updateWeather:    (status) =>
+    apiClient.post(`/digital-twin/weather/update?status=${status}`, {}),
+};
