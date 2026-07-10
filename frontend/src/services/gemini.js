@@ -14,7 +14,7 @@ class GeminiChatSession {
   async sendMessage(message) {
     this.#history.push({ role: 'user', parts: [{ text: message }] });
 
-    const data = await this.#client.#call('generateContent', {
+    const data = await this.#client.callApi('generateContent', {
       contents: this.#history,
     });
 
@@ -40,7 +40,7 @@ class GeminiService {
     return `${GEMINI_BASE_URL}/models/${this.model}:${method}?key=${this.#apiKey}`;
   }
 
-  async #call(method, body) {
+  async callApi(method, body) {
     const response = await fetch(this.#endpoint(method), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -65,7 +65,7 @@ class GeminiService {
     if (systemInstruction) {
       body.systemInstruction = { parts: [{ text: systemInstruction }] };
     }
-    const data = await this.#call('generateContent', body);
+    const data = await this.callApi('generateContent', body);
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   }
 

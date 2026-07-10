@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config.settings import settings
-from app.routes import fans, security, volunteers, venue, organizers, ai
+from app.routes import fans, security, volunteers, venue, organizers, ai, accessibility
 from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -33,12 +33,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(fans.router,        prefix="/fans",        tags=["Fan Experience"])
-app.include_router(security.router,    prefix="/security",    tags=["Security Operations"])
-app.include_router(volunteers.router,  prefix="/volunteers",  tags=["Volunteer Management"])
-app.include_router(venue.router,       prefix="/venue",       tags=["Venue Operations"])
-app.include_router(organizers.router,  prefix="/organizers",  tags=["Organizer Tools"])
-app.include_router(ai.router,          prefix="/ai",          tags=["AI Assistant"])
+app.include_router(fans.router,          prefix="/fans",          tags=["Fan Experience"])
+app.include_router(security.router,      prefix="/security",      tags=["Security Operations"])
+app.include_router(volunteers.router,    prefix="/volunteers",    tags=["Volunteer Management"])
+app.include_router(venue.router,         prefix="/venue",         tags=["Venue Operations"])
+app.include_router(organizers.router,    prefix="/organizers",    tags=["Organizer Tools"])
+app.include_router(ai.router,            prefix="/ai",            tags=["AI Assistant"])
+app.include_router(accessibility.router, prefix="/accessibility", tags=["Accessibility AI"])
 
 
 @app.get("/health", tags=["System"], summary="Health check")

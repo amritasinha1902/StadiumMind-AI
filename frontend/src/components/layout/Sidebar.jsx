@@ -10,18 +10,20 @@ import {
   Bot,
   Trophy,
   ChevronLeft,
+  Accessibility,
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import Badge from '@/components/ui/Badge';
 
 const navItems = [
-  { label: 'Dashboard',       to: '/dashboard',    icon: LayoutDashboard },
-  { label: 'Fan Experience',  to: '/fans',         icon: Users },
-  { label: 'Security Ops',    to: '/security',     icon: Shield,        badge: { text: '3', variant: 'danger'  } },
-  { label: 'Volunteers',      to: '/volunteers',   icon: HandHelping },
-  { label: 'Venue Ops',       to: '/venue',        icon: Building2 },
-  { label: 'Organizers',      to: '/organizers',   icon: ClipboardList },
-  { label: 'AI Assistant',    to: '/ai-assistant', icon: Bot,           badge: { text: 'AI', variant: 'primary' } },
+  { label: 'Dashboard',       to: '/dashboard',     icon: LayoutDashboard },
+  { label: 'Fan Experience',  to: '/fans',          icon: Users },
+  { label: 'Security Ops',    to: '/security',      icon: Shield,        badge: { text: '3', variant: 'danger'  } },
+  { label: 'Volunteers',      to: '/volunteers',    icon: HandHelping },
+  { label: 'Venue Ops',       to: '/venue',         icon: Building2 },
+  { label: 'Organizers',      to: '/organizers',    icon: ClipboardList },
+  { label: 'AI Assistant',    to: '/ai-assistant',  icon: Bot,           badge: { text: 'AI', variant: 'primary' } },
+  { label: 'Accessibility',   to: '/accessibility', icon: Accessibility },
 ];
 
 export default function Sidebar() {

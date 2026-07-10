@@ -11,15 +11,20 @@ class ApiClient {
     this.#authToken = token;
   }
 
-  #buildHeaders(extra = {}) {
-    const headers = { 'Content-Type': 'application/json', ...extra };
+  #buildHeaders(extra = {}, isFormData = false) {
+    const headers = {};
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+    Object.assign(headers, extra);
     if (this.#authToken) headers['Authorization'] = `Bearer ${this.#authToken}`;
     return headers;
   }
 
   async #request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
-    const config = { headers: this.#buildHeaders(options.headers), ...options };
+    const isFormData = options.body instanceof FormData;
+    const config = { headers: this.#buildHeaders(options.headers, isFormData), ...options };
 
     const response = await fetch(url, config);
 
@@ -36,15 +41,18 @@ class ApiClient {
   }
 
   post(endpoint, body, headers = {}) {
-    return this.#request(endpoint, { method: 'POST', body: JSON.stringify(body), headers });
+    const requestBody = body instanceof FormData ? body : JSON.stringify(body);
+    return this.#request(endpoint, { method: 'POST', body: requestBody, headers });
   }
 
   put(endpoint, body, headers = {}) {
-    return this.#request(endpoint, { method: 'PUT', body: JSON.stringify(body), headers });
+    const requestBody = body instanceof FormData ? body : JSON.stringify(body);
+    return this.#request(endpoint, { method: 'PUT', body: requestBody, headers });
   }
 
   patch(endpoint, body, headers = {}) {
-    return this.#request(endpoint, { method: 'PATCH', body: JSON.stringify(body), headers });
+    const requestBody = body instanceof FormData ? body : JSON.stringify(body);
+    return this.#request(endpoint, { method: 'PATCH', body: requestBody, headers });
   }
 
   delete(endpoint, headers = {}) {
@@ -95,4 +103,14 @@ export const aiApi = {
     apiClient.post('/ai/chat', { message, history: history || [], context }),
   generateSummary: (data, type)   => apiClient.post('/ai/summary', { data, summary_type: type }),
   translate:      (text, lang)    => apiClient.post('/ai/translate', { text, target_language: lang }),
+};
+
+export const accessibilityApi = {
+  chat:          (message, history, location) =>
+    apiClient.post('/accessibility/voice', { message, history, location }),
+  analyzeOcr:    (formData) => apiClient.post('/accessibility/ocr', formData),
+  analyzeScene:  (formData) => apiClient.post('/accessibility/scene', formData),
+  detectObjects: (formData) => apiClient.post('/accessibility/objects', formData),
+  triggerSos:    (location, type = 'general', notes = '') =>
+    apiClient.post('/accessibility/sos', { current_location: location, emergency_type: type, notes }),
 };

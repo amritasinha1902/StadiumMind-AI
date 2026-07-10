@@ -134,3 +134,113 @@
     animation: fadeIn 0.5s ease-in-out forwards;
   }
 }
+
+/* ── Accessibility Mode Overrides ────────────────────────────────────── */
+
+/* 1. Text Size Scaling */
+:root.text-size-small {
+  font-size: 14px;
+}
+:root.text-size-medium {
+  font-size: 16px;
+}
+:root.text-size-large {
+  font-size: 19px;
+}
+:root.text-size-extra-large {
+  font-size: 22px;
+}
+
+/* 2. Larger Buttons scaling */
+:root.large-buttons button,
+:root.large-buttons .btn {
+  padding-top: 0.85rem !important;
+  padding-bottom: 0.85rem !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+  font-size: 1.1rem !important;
+  border-width: 2px !important;
+}
+
+/* 3. Reduce Animations */
+:root.reduce-animations *,
+:root.reduce-animations *::before,
+:root.reduce-animations *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* 4. High Contrast Mode Override */
+:root.high-contrast {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+:root.high-contrast body,
+:root.high-contrast #root,
+:root.high-contrast main,
+:root.high-contrast aside,
+:root.high-contrast header,
+:root.high-contrast footer,
+:root.high-contrast .nexus-card,
+:root.high-contrast .nexus-glass,
+:root.high-contrast .nexus-surface,
+:root.high-contrast .nexus-surface2 {
+  background: #000000 !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+  border-color: #FFFF00 !important;
+  box-shadow: none !important;
+}
+
+:root.high-contrast a,
+:root.high-contrast button,
+:root.high-contrast input,
+:root.high-contrast textarea,
+:root.high-contrast select {
+  color: #FFFFFF !important;
+  background-color: #000000 !important;
+  border: 2px solid #FFFF00 !important;
+  outline-color: #FFFF00 !important;
+}
+
+:root.high-contrast button:hover,
+:root.high-contrast a:hover {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
+}
+
+:root.high-contrast .text-nexus-muted,
+:root.high-contrast .text-nexus-text,
+:root.high-contrast .text-nexus-primary,
+:root.high-contrast .text-nexus-accent,
+:root.high-contrast .text-nexus-primary-light {
+  color: #FFFFFF !important;
+}
+
+:root.high-contrast .bg-nexus-primary,
+:root.high-contrast .bg-nexus-accent,
+:root.high-contrast .bg-nexus-surface2,
+:root.high-contrast .bg-primary-gradient,
+:root.high-contrast .bg-accent-gradient {
+  background: #000000 !important;
+  border: 1px solid #FFFF00 !important;
+}
+
+:root.high-contrast .gradient-text {
+  background: none !important;
+  -webkit-text-fill-color: #FFFF00 !important;
+  color: #FFFF00 !important;
+}
+
+:root.high-contrast svg {
+  stroke: #FFFF00 !important;
+  fill: none !important;
+}
+
+:root.high-contrast .border-nexus-border,
+:root.high-contrast .border {
+  border-color: #FFFF00 !important;
+}

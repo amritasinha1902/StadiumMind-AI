@@ -13,6 +13,7 @@ import VolunteersPage from '@/pages/VolunteersPage';
 import VenuePage from '@/pages/VenuePage';
 import OrganizersPage from '@/pages/OrganizersPage';
 import AIAssistantPage from '@/pages/AIAssistantPage';
+import AccessibilityPage from '@/pages/AccessibilityPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
                 <Route path="venue" element={<VenuePage />} />
                 <Route path="organizers" element={<OrganizersPage />} />
                 <Route path="ai-assistant" element={<AIAssistantPage />} />
+                <Route path="accessibility" element={<AccessibilityPage />} />
               </Route>
 
               {/* 404 */}
