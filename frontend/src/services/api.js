@@ -114,3 +114,16 @@ export const accessibilityApi = {
   triggerSos:    (location, type = 'general', notes = '') =>
     apiClient.post('/accessibility/sos', { current_location: location, emergency_type: type, notes }),
 };
+
+export const fanCopilotApi = {
+  chat:          (message, history, preferences, parkingLocation, language = 'en') =>
+    apiClient.post('/fan-copilot/chat', { message, history, preferences, parking_location: parkingLocation, language }),
+  translate:     (text, targetLang) =>
+    apiClient.post('/fan-copilot/translate', { text, target_language: targetLang }),
+  saveParking:   (location) =>
+    apiClient.post('/fan-copilot/parking', { location }),
+  updatePrefs:   (preferences) =>
+    apiClient.post('/fan-copilot/preferences', { preferences }),
+  getRecommendations: (category, currentLocation, preferences) =>
+    apiClient.post('/fan-copilot/recommendations', { category, current_location: currentLocation, preferences }),
+};

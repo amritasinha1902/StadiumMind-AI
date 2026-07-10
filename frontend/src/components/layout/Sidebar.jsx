@@ -11,6 +11,7 @@ import {
   Trophy,
   ChevronLeft,
   Accessibility,
+  MessageSquare,
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import Badge from '@/components/ui/Badge';
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Organizers',      to: '/organizers',    icon: ClipboardList },
   { label: 'AI Assistant',    to: '/ai-assistant',  icon: Bot,           badge: { text: 'AI', variant: 'primary' } },
   { label: 'Accessibility',   to: '/accessibility', icon: Accessibility },
+  { label: 'Fan Copilot',     to: '/fan-copilot',   icon: MessageSquare, badge: { text: 'New', variant: 'accent' } },
 ];
 
 export default function Sidebar() {
