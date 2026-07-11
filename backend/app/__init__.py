@@ -1,1 +1,1 @@
-"""FIFA Nexus AI – backend application package."""
+"""StadiumMind AI – backend application package."""

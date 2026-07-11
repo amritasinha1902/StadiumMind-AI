@@ -26,106 +26,118 @@ from app.prompts.digital_twin_prompts import (
 
 
 class DigitalTwinService:
-    # Class-level state to persist across requests (simulating real-time updates)
-    _state: Dict[str, Any] = {}
-
     def __init__(self) -> None:
         self._gemini = GeminiClient()
-        self._init_state()
+        from mock_data.simulator import StadiumSimulator
+        self.simulator = StadiumSimulator()
 
     def _init_state(self) -> None:
-        if self._state:
-            return
+        pass
 
-        self._state["weather"] = WeatherModel(
-            temperature_c=24.0,
-            humidity_pct=65.0,
-            status="sunny",
+    async def get_status(self) -> TwinStatusResponse:
+        # Trigger simulation update
+        self.simulator.update()
+
+        # Map Weather
+        weather = WeatherModel(
+            temperature_c=self.simulator.weather["temperature_c"],
+            humidity_pct=self.simulator.weather["humidity_pct"],
+            status=self.simulator.weather["status"]
         )
 
-        self._state["incidents"] = [
+        # Map Incidents
+        incidents = [
             IncidentModel(
-                incident_id="INC-302",
-                type="overcrowding",
-                location="North Concourse A",
-                severity="medium",
-                status="active",
+                incident_id=inc["incident_id"],
+                type=inc["type"],
+                location=inc["location"],
+                severity=inc["severity"],
+                status=inc["status"]
+            )
+            for inc in self.simulator.incidents
+        ]
+
+        # Map Gates
+        crowd_gates = [
+            CrowdGateModel(
+                gate_id=g_id,
+                name=g["name"],
+                current_count=g["current_count"],
+                density_percentage=g["density_percentage"],
+                status=g["status"]
+            )
+            for g_id, g in self.simulator.entrances.items()
+        ]
+
+        # Map Volunteers
+        volunteers = [
+            VolunteerTwinModel(
+                volunteer_id=v["volunteer_id"],
+                name=v["name"],
+                status=v["status"],
+                location=v["location"],
+                assigned_to=v["assignment"]
+            )
+            for v in self.simulator.volunteers
+        ]
+
+        # Map Medical
+        medical_teams = [
+            MedicalTeamTwinModel(
+                team_id=self.simulator.medical["team_id"],
+                name=self.simulator.medical["name"],
+                status=self.simulator.medical["status"],
+                location=self.simulator.medical["location"]
             )
         ]
 
-        self._state["crowd_gates"] = [
-            CrowdGateModel(gate_id="G1", name="Gate 1 (West Entrance)", current_count=8200, density_percentage=42.0, status="low"),
-            CrowdGateModel(gate_id="G2", name="Gate 2 (South Entrance)", current_count=14500, density_percentage=73.0, status="busy"),
-            CrowdGateModel(gate_id="G3", name="Gate 3 (North Entrance)", current_count=19200, density_percentage=94.0, status="congested"),
-            CrowdGateModel(gate_id="G4", name="Gate 4 (East Entrance)", current_count=9800, density_percentage=55.0, status="moderate"),
+        # Map Concessions
+        food_courts = [
+            FoodCourtTwinModel(
+                stall_id=f_id,
+                name=f["name"],
+                queue_length=f["queue_length"],
+                wait_time_minutes=f["wait_time_minutes"],
+                inventory_status=f["status"]
+            )
+            for f_id, f in self.simulator.food_stalls.items()
         ]
 
-        self._state["volunteers"] = [
-            VolunteerTwinModel(volunteer_id="V-101", name="David Kim", status="available", location="Gate 2 Information Desk"),
-            VolunteerTwinModel(volunteer_id="V-102", name="Elena Rostova", status="available", location="Concourse Sector C"),
-            VolunteerTwinModel(volunteer_id="V-103", name="Carlos Gomez", status="responding", location="North Entrance Lobby", assigned_to="INC-302"),
+        # Map Transit
+        transit = [
+            TransitStatusModel(mode="metro", status=self.simulator.transit["metro_status"], info=self.simulator.transit["metro_info"]),
+            TransitStatusModel(mode="shuttle", status="busy", info=self.simulator.transit["shuttle_info"]),
+            TransitStatusModel(mode="taxi", status="delayed", info=self.simulator.transit["taxi_info"]),
+            TransitStatusModel(mode="parking", status="normal", info=self.simulator.transit["parking_info"]),
+            TransitStatusModel(mode="walking", status="normal", info=self.simulator.transit["walking_info"])
         ]
 
-        self._state["medical_teams"] = [
-            MedicalTeamTwinModel(team_id="MED-1", name="Medical Team 1", status="available", location="First Aid Station 1"),
-            MedicalTeamTwinModel(team_id="MED-2", name="Medical Team 2", status="treating_patient", location="Section 104 Walkway"),
-        ]
-
-        self._state["food_courts"] = [
-            FoodCourtTwinModel(stall_id="F1", name="Stadium Grill A", queue_length=24, wait_time_minutes=15, inventory_status="normal"),
-            FoodCourtTwinModel(stall_id="F2", name="Taco Corner B", queue_length=8, wait_time_minutes=5, inventory_status="low"),
-            FoodCourtTwinModel(stall_id="F3", name="Beverage Stand C", queue_length=42, wait_time_minutes=25, inventory_status="normal"),
-        ]
-
-        self._state["transit"] = [
-            TransitStatusModel(mode="metro", status="normal", info="Trains operating every 3 minutes. Platform 1 slightly crowded."),
-            TransitStatusModel(mode="shuttle", status="busy", info="Shuttle buses delayed by 8 minutes due to outer loop traffic."),
-            TransitStatusModel(mode="taxi", status="delayed", info="High demand taxi queue. Average wait time: 18 minutes."),
-            TransitStatusModel(mode="parking", status="normal", info="Lot A and Lot B are 95% full. Lot C has 200 available slots."),
-            TransitStatusModel(mode="walking", status="normal", info="Sensors record clear, safe walking paths across all exits."),
-        ]
-
-    async def get_status(self) -> TwinStatusResponse:
-        # 1. Simulate minor crowd variation
-        for gate in self._state["crowd_gates"]:
-            delta = random.choice([-200, -100, 100, 200, 300])
-            gate.current_count = max(100, gate.current_count + delta)
-            gate.density_percentage = min(100.0, max(0.0, gate.density_percentage + (delta / 250.0)))
-            if gate.density_percentage >= 90:
-                gate.status = "congested"
-            elif gate.density_percentage >= 70:
-                gate.status = "busy"
-            elif gate.density_percentage >= 40:
-                gate.status = "moderate"
-            else:
-                gate.status = "low"
-
-        # 2. Extract alerts based on states
+        # Extract alerts based on states
         alerts = []
-        for gate in self._state["crowd_gates"]:
+        for gate in crowd_gates:
             if gate.status == "congested":
                 alerts.append(f"High crowd density detected near {gate.name}. Suggest redirecting entrants.")
 
-        for stall in self._state["food_courts"]:
+        for stall in food_courts:
             if stall.inventory_status == "low":
                 alerts.append(f"Low inventory warning at {stall.name}. Restock within 20 minutes.")
 
-        # 3. Request Gemini to analyze operations
+        # Request Gemini to analyze operations
         try:
             summary_prompt = (
-                f"Active Incidents: {self._state['incidents']}\n"
-                f"Crowd Gates: {self._state['crowd_gates']}\n"
-                f"Weather: {self._state['weather']}"
+                f"Active Incidents: {incidents}\n"
+                f"Crowd Gates: {crowd_gates}\n"
+                f"Weather: {weather}"
             )
             ops_summary = await self._gemini.generate(
                 prompt=summary_prompt,
                 system_instruction=OPERATIONS_SUMMARY_PROMPT,
             )
         except Exception:
-            ops_summary = "North Gate congestion is increasing. Direct incoming visitors to East Gate. Medical Team 1 is available at First Aid Station 1. Concourse flows are stable."
+            ops_summary = "North Gate congestion is increasing. Direct incoming visitors to East Gate. Medical Team 1 is available. Concourse flows are stable."
 
         try:
-            predictions_prompt = f"Crowd Gates state details:\n{self._state['crowd_gates']}"
+            predictions_prompt = f"Crowd Gates state details:\n{crowd_gates}"
             predictions_text = await self._gemini.generate(
                 prompt=predictions_prompt,
                 system_instruction=CROWD_PREDICTION_PROMPT,
@@ -214,50 +226,82 @@ class DigitalTwinService:
         inc_type, desc, loc, severity = random.choice(incident_types)
         inc_id = f"INC-{random.randint(400, 999)}"
 
-        new_incident = IncidentModel(
+        new_incident = {
+            "incident_id": inc_id,
+            "type": inc_type,
+            "location": loc,
+            "severity": severity,
+            "status": "active",
+            "assigned_team": "Pending Dispatch",
+            "estimated_resolution_min": 15,
+            "ai_recommendation": f"AI Action plan: {desc}."
+        }
+
+        self.simulator.incidents.append(new_incident)
+        self.simulator.logs.append({
+            "timestamp": self.simulator.sim_time.isoformat(),
+            "level": "WARN" if severity != "high" else "ERROR",
+            "message": f"Injected incident: {inc_type} at {loc}."
+        })
+
+        return IncidentModel(
             incident_id=inc_id,
             type=inc_type,
             location=loc,
             severity=severity,
-            status="active",
+            status="active"
         )
-
-        self._state["incidents"].append(new_incident)
-        return new_incident
 
     async def assign_responder(self, request: IncidentActionRequest) -> Dict[str, Any]:
         target_incident = None
-        for inc in self._state["incidents"]:
-            if inc.incident_id == request.incident_id:
+        for inc in self.simulator.incidents:
+            if inc["incident_id"] == request.incident_id:
                 target_incident = inc
                 break
 
         if not target_incident:
             return {"status": "error", "message": f"Incident {request.incident_id} not found."}
 
-        target_incident.status = "responding"
+        target_incident["status"] = "responding"
 
         # Update responder state
         if request.responder_type == "volunteer":
-            for vol in self._state["volunteers"]:
-                if vol.volunteer_id == request.assigned_responder_id:
-                    vol.status = "responding"
-                    vol.assigned_to = request.incident_id
+            for vol in self.simulator.volunteers:
+                if vol["volunteer_id"] == request.assigned_responder_id:
+                    vol["status"] = "responding"
+                    vol["assignment"] = request.incident_id
+                    target_incident["assigned_team"] = f"Volunteer {vol['name']}"
+                    
+                    v_model = VolunteerTwinModel(
+                        volunteer_id=vol["volunteer_id"],
+                        name=vol["name"],
+                        status=vol["status"],
+                        location=vol["location"],
+                        assigned_to=vol["assignment"]
+                    )
                     return {
                         "status": "success",
-                        "message": f"Volunteer {vol.name} assigned to incident {request.incident_id}.",
-                        "responder": vol,
+                        "message": f"Volunteer {vol['name']} assigned to incident {request.incident_id}.",
+                        "responder": v_model,
                     }
         else:
-            for med in self._state["medical_teams"]:
-                if med.team_id == request.assigned_responder_id:
-                    med.status = "treating_patient"
-                    med.assigned_to = request.incident_id
-                    return {
-                        "status": "success",
-                        "message": f"Medical Team {med.name} dispatched to {request.incident_id}.",
-                        "responder": med,
-                    }
+            if self.simulator.medical["team_id"] == request.assigned_responder_id:
+                self.simulator.medical["status"] = "treating_patient"
+                self.simulator.medical["assigned_to"] = request.incident_id
+                target_incident["assigned_team"] = self.simulator.medical["name"]
+                
+                m_model = MedicalTeamTwinModel(
+                    team_id=self.simulator.medical["team_id"],
+                    name=self.simulator.medical["name"],
+                    status=self.simulator.medical["status"],
+                    location=self.simulator.medical["location"],
+                    assigned_to=self.simulator.medical["assigned_to"]
+                )
+                return {
+                    "status": "success",
+                    "message": f"Medical Team {self.simulator.medical['name']} dispatched.",
+                    "responder": m_model,
+                }
 
         return {"status": "error", "message": f"Responder {request.assigned_responder_id} not found."}
 
@@ -268,11 +312,12 @@ class DigitalTwinService:
         temp = 28.0 if status == "sunny" else 22.0 if status == "cloudy" else 18.0
         hum = 50.0 if status == "sunny" else 70.0 if status == "cloudy" else 95.0
 
-        w = WeatherModel(
+        self.simulator.weather["status"] = status
+        self.simulator.weather["temperature_c"] = temp
+        self.simulator.weather["humidity_pct"] = hum
+
+        return WeatherModel(
             temperature_c=temp,
             humidity_pct=hum,
             status=status,
         )
-
-        self._state["weather"] = w
-        return w

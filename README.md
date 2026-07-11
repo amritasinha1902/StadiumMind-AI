@@ -1,8 +1,8 @@
-# ⚽ FIFA Nexus AI
+# ⚽ StadiumMind AI
 
 > **AI-powered Stadium Operating System for FIFA World Cup 2026**
 
-FIFA Nexus AI is a comprehensive, intelligent platform unifying fans, volunteers, organizers, security staff, and venue operators through Google Gemini AI.
+StadiumMind AI is a comprehensive, intelligent platform unifying fans, volunteers, organizers, security staff, and venue operators through Google Gemini AI.
 
 ---
 
@@ -140,24 +140,57 @@ Interactive docs: `http://localhost:8000/docs`
 
 ## 📦 Deployment
 
-### Firebase Hosting (Frontend)
+### 🐳 Docker Compose (Local Orchestration)
+To spin up both services locally in a production-like setting:
 ```bash
-cd frontend && npm run build
-firebase deploy --only hosting
-```
+# 1. Compile the React frontend assets
+cd frontend && npm run build && cd ..
 
-### Google Cloud Run (Backend)
-```bash
-cd backend
-gcloud builds submit --tag gcr.io/[PROJECT_ID]/fifa-nexus-ai-backend
-gcloud run deploy fifa-nexus-ai-backend \
-  --image gcr.io/[PROJECT_ID]/fifa-nexus-ai-backend \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
+# 2. Start the multi-container stack
+docker compose up -d --build
 ```
+The frontend is available at `http://localhost:3000` (served by Nginx) and proxied to the backend running at `http://localhost:8080`.
+
+### ⚡ Google Cloud Run (Backend Manual Deployment)
+1. Submit your build to Artifact Registry:
+   ```bash
+   cd backend
+   gcloud builds submit --tag us-central1-docker.pkg.dev/[PROJECT_ID]/stadiummind-repo/backend-api:latest
+   ```
+2. Deploy to Cloud Run linking Google Secret Manager for the Gemini API key:
+   ```bash
+   gcloud run deploy stadiummind-backend-api \
+     --image us-central1-docker.pkg.dev/[PROJECT_ID]/stadiummind-repo/backend-api:latest \
+     --region us-central1 \
+     --platform managed \
+     --allow-unauthenticated \
+     --set-env-vars "ENVIRONMENT=production,LOG_LEVEL=INFO,GEMINI_MODEL=gemini-1.5-flash" \
+     --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest"
+   ```
+
+### 🎨 Firebase Hosting (Frontend Manual Deployment)
+1. Build the production package pointing to the Cloud Run backend URL:
+   ```bash
+   cd frontend
+   VITE_API_BASE_URL=https://[YOUR_CLOUD_RUN_URL] npm run build
+   ```
+2. Deploy static assets:
+   ```bash
+   firebase deploy --only hosting
+   ```
+
+### 🔄 CI/CD Pipeline (GitHub Actions)
+Upon pushing to the `main` branch, the `.github/workflows/deploy.yml` workflow automatically:
+1. Performs static python syntax compilation.
+2. Builds and pushes the backend image to Google Artifact Registry, and deploys it to Cloud Run.
+3. Installs frontend dependencies, builds static assets, and deploys to Firebase Hosting.
+
+Ensure the following repository secrets are set up on GitHub:
+- `GCP_SA_KEY`: Service account credentials JSON with Cloud Run Admin + Artifact Registry Writer access.
+- `GCP_PROJECT_ID`: Target Google Cloud Project ID.
+- `FIREBASE_SERVICE_ACCOUNT_STADIUMMIND_AI`: Firebase Hosting deploy token credentials.
 
 ---
 
 ## 📄 License
-MIT © FIFA Nexus AI Team
+MIT © StadiumMind AI Team

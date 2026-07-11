@@ -91,6 +91,7 @@ class MultiAgentService:
             "language":      updated_memory.preferred_language,
             "food":          updated_memory.food_preference,
             "transit":       updated_memory.transportation_method,
+            "history":       request.history,
         }
 
         # Run Supervisor Orchestrator pipeline

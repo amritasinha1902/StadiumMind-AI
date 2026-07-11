@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, Dict, List, Optional
 
 import google.generativeai as genai
@@ -9,7 +10,7 @@ logger = get_logger(__name__)
 
 
 class GeminiClient:
-    """Singleton-safe Google Gemini API client for FIFA Nexus AI."""
+    """Singleton-safe Google Gemini API client for StadiumMind AI."""
 
     model: str
 
@@ -30,6 +31,27 @@ class GeminiClient:
             kwargs["system_instruction"] = system_instruction
         return genai.GenerativeModel(**kwargs)
 
+    async def _call_with_retry(self, func: Any, *args: Any, **kwargs: Any) -> Any:
+        """Call async function with exponential backoff retries."""
+        max_retries = 3
+        initial_delay = 1.0
+        backoff_factor = 2.0
+        delay = initial_delay
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                return await func(*args, **kwargs)
+            except Exception as exc:
+                logger.warning(
+                    "Gemini API call failed (attempt %d/%d). Retrying in %.2f seconds... Error: %s",
+                    attempt, max_retries, delay, exc
+                )
+                if attempt == max_retries:
+                    logger.error("Gemini API call failed after %d retries.", max_retries)
+                    raise
+                await asyncio.sleep(delay)
+                delay *= backoff_factor
+
     async def generate(
         self,
         prompt: str,
@@ -37,11 +59,11 @@ class GeminiClient:
     ) -> str:
         """Generate a single-turn text response."""
         try:
-            model    = self._build_model(system_instruction)
-            response = await model.generate_content_async(prompt)
+            model = self._build_model(system_instruction)
+            response = await self._call_with_retry(model.generate_content_async, prompt)
             return response.text
         except Exception as exc:
-            logger.error("Gemini generate error: %s", exc)
+            logger.error("Gemini generate error after retries: %s", exc)
             raise
 
     async def chat(
@@ -54,10 +76,10 @@ class GeminiClient:
         try:
             model   = self._build_model(system_instruction)
             session = model.start_chat(history=history or [])
-            response = await session.send_message_async(message)
+            response = await self._call_with_retry(session.send_message_async, message)
             return response.text
         except Exception as exc:
-            logger.error("Gemini chat error: %s", exc)
+            logger.error("Gemini chat error after retries: %s", exc)
             raise
 
     async def summarize(

@@ -67,22 +67,21 @@ export default function AIAssistantPage() {
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-10">
-              <div className="w-20 h-20 rounded-2xl bg-primary-gradient flex items-center justify-center mb-6 shadow-glow">
+              <div className="w-20 h-20 rounded-3xl bg-primary-gradient flex items-center justify-center mb-6 shadow-glow animate-pulse-glow">
                 <Bot size={36} className="text-white" />
               </div>
-              <h2 className="text-2xl font-display font-bold text-nexus-text mb-2">How can I help you?</h2>
+              <h2 className="text-3xl font-display font-black text-nexus-text mb-2">How can I help you?</h2>
               <p className="text-nexus-muted max-w-md mb-8 text-sm leading-relaxed">
-                Ask me anything about stadium operations, fan services, security, volunteer
-                coordination, or venue management.
+                Ask anything about stadium operations, real-time fan services, emergency support, volunteer rosters, or venue metrics.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-2xl w-full">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
                 {suggestions.map((s) => (
                   <button
                     key={s}
                     onClick={() => setInput(s)}
-                    className="p-3 rounded-xl text-left text-sm text-nexus-muted hover:text-nexus-text nexus-card hover:border-nexus-primary/40 transition-all duration-200"
+                    className="p-4 rounded-2xl text-left text-sm text-nexus-muted hover:text-nexus-text nexus-card border border-nexus-border/60 hover:border-nexus-primary/40 hover:scale-[1.02] hover:shadow-nexus transition-all duration-200"
                   >
-                    {s}
+                    💡 {s}
                   </button>
                 ))}
               </div>
@@ -94,17 +93,17 @@ export default function AIAssistantPage() {
                 className={`flex gap-3 animate-slide-up ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
               >
                 {msg.role === 'assistant' ? (
-                  <div className="w-8 h-8 rounded-lg bg-primary-gradient flex items-center justify-center flex-shrink-0 shadow-nexus">
-                    <Bot size={16} className="text-white" />
+                  <div className="w-9 h-9 rounded-xl bg-primary-gradient flex items-center justify-center flex-shrink-0 shadow-nexus">
+                    <Bot size={18} className="text-white" />
                   </div>
                 ) : (
-                  <Avatar name="You" size="sm" />
+                  <Avatar name="You" size="sm" className="w-9 h-9 shadow-sm" />
                 )}
                 <div
                   className={`max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-nexus-primary text-white rounded-tr-sm'
-                      : 'nexus-card rounded-tl-sm text-nexus-text'
+                      ? 'bg-nexus-primary text-white rounded-tr-none shadow-nexus border border-nexus-primary-dark/20'
+                      : 'nexus-card rounded-tl-none text-nexus-text border border-nexus-border shadow-sm'
                   }`}
                 >
                   {msg.content}
@@ -114,19 +113,23 @@ export default function AIAssistantPage() {
           )}
 
           {loading && (
-            <div className="flex gap-3">
+            <div className="flex gap-3 animate-pulse">
               <div className="w-8 h-8 rounded-lg bg-primary-gradient flex items-center justify-center flex-shrink-0 shadow-nexus">
                 <Bot size={16} className="text-white" />
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-tl-sm nexus-card">
-                <div className="flex gap-1 items-center">
-                  {[0, 150, 300].map((delay) => (
-                    <span
-                      key={delay}
-                      className="w-2 h-2 rounded-full bg-nexus-muted animate-bounce"
-                      style={{ animationDelay: `${delay}ms` }}
-                    />
-                  ))}
+              <div className="px-4 py-3.5 rounded-2xl rounded-tl-sm nexus-card border border-nexus-primary/30 shadow-glow relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-nexus-primary/10 via-nexus-accent/5 to-nexus-primary/10 animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                <div className="relative flex items-center gap-2">
+                  <span className="text-xs font-display font-bold text-nexus-primary-light uppercase tracking-wider">StadiumMind AI</span>
+                  <div className="flex gap-1 items-center">
+                    {[0, 150, 300].map((delay) => (
+                      <span
+                        key={delay}
+                        className="w-1.5 h-1.5 rounded-full bg-nexus-accent"
+                        style={{ animationDelay: `${delay}ms` }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

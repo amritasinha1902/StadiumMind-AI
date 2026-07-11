@@ -16,7 +16,7 @@ export default function NotificationBell({ count = 0 }) {
     <div className="relative">
       <button
         onClick={handleOpen}
-        className="relative p-2 rounded-lg text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 transition-colors"
+        className="relative p-2 rounded-lg text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nexus-primary"
         aria-label={`Notifications${count > 0 ? ` (${count} unread)` : ''}`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -43,7 +43,7 @@ export default function NotificationBell({ count = 0 }) {
               {notifications.length > 0 && (
                 <button
                   onClick={clearNotifications}
-                  className="text-xs text-nexus-muted hover:text-nexus-danger transition-colors"
+                  className="text-xs text-nexus-muted hover:text-nexus-danger transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-nexus-danger rounded"
                 >
                   Clear all
                 </button>

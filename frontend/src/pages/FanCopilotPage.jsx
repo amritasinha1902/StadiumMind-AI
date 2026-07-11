@@ -484,19 +484,19 @@ export default function FanCopilotPage() {
               key={index}
               className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} animate-slide-up`}
             >
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                msg.role === 'user' ? 'bg-nexus-surface2 border border-nexus-border' : 'bg-primary-gradient'
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                msg.role === 'user' ? 'bg-nexus-surface border border-nexus-border' : 'bg-primary-gradient'
               }`}>
-                {msg.role === 'user' ? 'U' : <Sparkles size={16} className="text-white" />}
+                {msg.role === 'user' ? <User size={16} className="text-nexus-muted" /> : <Sparkles size={16} className="text-white" />}
               </div>
 
               <div className="max-w-[80%] space-y-1.5">
-                <div className={`relative px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                <div className={`relative px-4 py-3.5 rounded-2xl text-sm leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-nexus-primary text-white rounded-tr-none shadow-nexus'
+                    ? 'bg-nexus-primary text-white rounded-tr-none shadow-nexus border border-nexus-primary-dark/20'
                     : msg.mode === 'emergency'
                       ? 'bg-nexus-danger/10 border-2 border-nexus-danger text-nexus-text rounded-tl-none'
-                      : 'bg-nexus-surface2 border border-nexus-border text-nexus-text rounded-tl-none'
+                      : 'nexus-card rounded-tl-none text-nexus-text border border-nexus-border'
                 }`}>
                   <p className="whitespace-pre-line">{msg.content}</p>
 
@@ -550,13 +550,24 @@ export default function FanCopilotPage() {
           ))}
 
           {loading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary-gradient flex items-center justify-center flex-shrink-0">
+            <div className="flex gap-3 animate-pulse">
+              <div className="w-8 h-8 rounded-lg bg-primary-gradient flex items-center justify-center flex-shrink-0 shadow-nexus">
                 <Sparkles size={16} className="text-white" />
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-nexus-surface2 border border-nexus-border flex items-center gap-1.5">
-                <Loader2 size={14} className="animate-spin text-nexus-muted" />
-                <span className="text-xs text-nexus-muted">Co-pilot is writing...</span>
+              <div className="px-4 py-3.5 rounded-2xl rounded-tl-none nexus-card border border-nexus-primary/30 shadow-glow relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-nexus-primary/10 via-nexus-accent/5 to-nexus-primary/10 animate-shimmer" style={{ backgroundSize: '200% 100%' }} />
+                <div className="relative flex items-center gap-2">
+                  <span className="text-xs font-display font-bold text-nexus-primary-light uppercase tracking-wider">StadiumMind AI</span>
+                  <div className="flex gap-1 items-center">
+                    {[0, 150, 300].map((delay) => (
+                      <span
+                        key={delay}
+                        className="w-1.5 h-1.5 rounded-full bg-nexus-accent"
+                        style={{ animationDelay: `${delay}ms` }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -19,7 +19,7 @@ export default function AuthLayout() {
               <Trophy size={28} className="text-white" />
             </div>
             <div>
-              <p className="text-2xl font-display font-bold text-nexus-text leading-none">FIFA Nexus AI</p>
+              <p className="text-2xl font-display font-bold text-nexus-text leading-none">StadiumMind AI</p>
               <p className="text-xs text-nexus-accent font-semibold uppercase tracking-widest mt-1">
                 World Cup 2026
               </p>

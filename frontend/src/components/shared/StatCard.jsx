@@ -7,7 +7,7 @@ export default function StatCard({ title, value, change, changeLabel, icon: Icon
   const hasChange  = typeof change === 'number';
 
   return (
-    <div className={clsx('nexus-card p-5', className)}>
+    <div className={clsx('nexus-card p-5 hover:scale-[1.02] hover:shadow-nexus-lg hover:border-nexus-primary/30 transition-all duration-300', className)}>
       <div className="flex items-start justify-between mb-3">
         <p className="text-sm text-nexus-muted font-medium">{title}</p>
         {Icon && (

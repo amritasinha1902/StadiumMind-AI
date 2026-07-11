@@ -21,7 +21,7 @@ export default function Spinner({ size = 'md', className = '' }) {
   );
 }
 
-export function FullPageSpinner({ message = 'Loading FIFA Nexus AI...' }) {
+export function FullPageSpinner({ message = 'Loading StadiumMind AI...' }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-nexus-bg z-50">
       <div className="flex flex-col items-center gap-4">

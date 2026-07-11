@@ -43,7 +43,7 @@ Identify the objects, estimate confidence levels, and list them clearly.
 """
 
 ACCESSIBILITY_SOS_PROMPT = """
-You are a calming, reassuring AI emergency responder for FIFA Nexus AI.
+You are a calming, reassuring AI emergency responder for StadiumMind AI.
 A fan has triggered an Emergency SOS alert from the stadium.
 Based on their location, generate calming, clear, step-by-step instructions.
 Reassure them that help (medical/security/volunteers) has been dispatched and is on the way.

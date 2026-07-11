@@ -149,3 +149,11 @@ export const multiAgentApi = {
   getMemory:     () => apiClient.get('/multi-agent/memory'),
   getPrompts:    () => apiClient.get('/multi-agent/prompts'),
 };
+
+export const commandCenterApi = {
+  getStatus:       (role) => apiClient.get(`/command-center/status?role=${role}`),
+  resolveIncident: (incidentId) =>
+    apiClient.post('/command-center/incident/resolve', { incident_id: incidentId }),
+  generateReport:  (type) =>
+    apiClient.post('/command-center/report', { type }),
+};

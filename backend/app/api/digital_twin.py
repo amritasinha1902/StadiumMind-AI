@@ -31,3 +31,8 @@ async def assign_responder(request: IncidentActionRequest) -> Dict[str, Any]:
 
 async def update_weather(status: str) -> WeatherModel:
     return await _service.update_weather(status)
+
+
+async def set_simulation_speed(speed: float) -> Dict[str, Any]:
+    _service.simulator.set_speed(speed)
+    return {"status": "success", "speed_multiplier": speed}

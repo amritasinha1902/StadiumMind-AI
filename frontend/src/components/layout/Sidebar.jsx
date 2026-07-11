@@ -13,12 +13,14 @@ import {
   Accessibility,
   MessageSquare,
   Layers,
+  Radio,
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import Badge from '@/components/ui/Badge';
 
 const navItems = [
   { label: 'Dashboard',       to: '/dashboard',     icon: LayoutDashboard },
+  { label: 'Command Center',  to: '/command-center', icon: Radio,        badge: { text: 'Live', variant: 'danger' } },
   { label: 'Fan Experience',  to: '/fans',          icon: Users },
   { label: 'Security Ops',    to: '/security',      icon: Shield,        badge: { text: '3', variant: 'danger'  } },
   { label: 'Volunteers',      to: '/volunteers',    icon: HandHelping },
@@ -61,7 +63,7 @@ export default function Sidebar() {
             {sidebarOpen && (
               <div className="min-w-0 overflow-hidden">
                 <p className="text-sm font-display font-bold text-nexus-text leading-none truncate">
-                  FIFA Nexus AI
+                  StadiumMind AI
                 </p>
                 <p className="text-[9px] text-nexus-accent font-semibold uppercase tracking-widest mt-0.5">
                   World Cup 2026
@@ -96,10 +98,11 @@ export default function Sidebar() {
                   to={item.to}
                   className={({ isActive }) =>
                     clsx(
-                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 group',
+                      'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 group relative',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nexus-primary',
                       isActive
-                        ? 'bg-nexus-primary/20 text-nexus-primary-light border border-nexus-primary/30'
-                        : 'text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 border border-transparent'
+                        ? 'bg-nexus-primary/15 text-nexus-primary-light border border-nexus-primary/25 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]'
+                        : 'text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 border border-transparent hover:translate-x-0.5'
                     )
                   }
                 >

@@ -5,7 +5,7 @@ export default function Card({ children, className = '', hover = false, glow = f
     <div
       className={clsx(
         'nexus-card p-6',
-        hover && 'hover:border-nexus-primary/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer',
+        hover && 'hover:border-nexus-primary/30 hover:scale-[1.01] hover:shadow-nexus-lg cursor-pointer',
         glow  && 'glow-border',
         className
       )}

@@ -1,32 +1,17 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { auth, onAuthStateChanged } from '@/services/firebase';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser]       = useState(null);
-  const [role, setRole]       = useState(null);
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-
-      if (firebaseUser) {
-        try {
-          const tokenResult = await firebaseUser.getIdTokenResult();
-          setRole(tokenResult.claims.role || 'fan');
-        } catch {
-          setRole('fan');
-        }
-      } else {
-        setRole(null);
-      }
-
-      setLoading(false);
-    });
-
-    return unsubscribe;
+    // Firebase authentication disabled for PromptWars prototype
+    setUser(null);
+    setRole("fan");
+    setLoading(false);
   }, []);
 
   return (
@@ -35,7 +20,8 @@ export function AuthProvider({ children }) {
         user,
         role,
         loading,
-        isAuthenticated: !!user,
+        isAuthenticated: false,
+
       }}
     >
       {!loading && children}

@@ -19,7 +19,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 transition-colors"
+            className="p-2 rounded-lg text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nexus-primary"
             aria-label="Toggle navigation"
           >
             <Menu size={20} />
@@ -30,7 +30,7 @@ export default function Navbar() {
             <input
               type="search"
               placeholder="Search stadium, match, zone…"
-              className="nexus-input pl-9 py-2 text-sm w-60"
+              className="nexus-input pl-9 py-2 text-sm w-60 focus:ring-2 focus:ring-nexus-primary"
             />
           </div>
         </div>
@@ -39,7 +39,7 @@ export default function Navbar() {
         <div className="flex items-center gap-1.5">
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 transition-colors"
+            className="p-2 rounded-lg text-nexus-muted hover:text-nexus-text hover:bg-nexus-surface2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nexus-primary"
             aria-label="Toggle colour theme"
           >
             {isDark ? <Sun size={18} /> : <Moon size={18} />}

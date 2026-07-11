@@ -45,56 +45,66 @@
 @layer components {
   /* Glass morphism surface */
   .nexus-glass {
-    background: rgba(13, 27, 46, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(30, 58, 95, 0.5);
+    background: rgba(17, 20, 32, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   /* Standard dark card */
   .nexus-card {
-    background: linear-gradient(135deg, #0f1e35 0%, #1a2744 100%);
-    border: 1px solid rgba(30, 58, 95, 0.6);
-    border-radius: 12px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #111420 0%, #1b2030 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   /* Primary CTA button */
   .nexus-btn-primary {
-    background: linear-gradient(135deg, #004e9a 0%, #0066cc 50%, #0088ff 100%);
-    color: #f0f6ff;
+    background: linear-gradient(135deg, #0d51b3 0%, #1a73e8 100%);
+    color: #ffffff;
     font-weight: 600;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 136, 255, 0.3);
-    transition: all 0.2s ease;
+    border-radius: 9999px; /* Pill style */
+    border: 1px solid rgba(56, 139, 253, 0.4);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .nexus-btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 24px rgba(0, 102, 204, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4);
+    border-color: rgba(56, 139, 253, 0.8);
+  }
+
+  .nexus-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   /* Accent (gold) CTA button */
   .nexus-btn-accent {
-    background: linear-gradient(135deg, #c9a800 0%, #ffd700 50%, #ffe84d 100%);
-    color: #050a18;
+    background: linear-gradient(135deg, #c9a800 0%, #fbbc04 100%);
+    color: #080a10;
     font-weight: 700;
-    border-radius: 8px;
-    transition: all 0.2s ease;
+    border-radius: 9999px; /* Pill style */
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .nexus-btn-accent:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(251, 188, 4, 0.45);
+  }
+
+  .nexus-btn-accent:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   /* Form input */
   .nexus-input {
-    background: rgba(13, 27, 46, 0.85);
-    border: 1px solid rgba(30, 58, 95, 0.6);
-    border-radius: 8px;
-    color: #f0f6ff;
-    padding: 0.625rem 0.875rem;
+    background: rgba(17, 20, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #f0f4fa;
+    padding: 0.75rem 1rem;
     width: 100%;
     font-size: 0.875rem;
     transition: all 0.2s ease;
@@ -102,17 +112,18 @@
   }
 
   .nexus-input:focus {
-    border-color: #0066cc;
-    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+    background: rgba(17, 20, 32, 0.9);
   }
 
   .nexus-input::placeholder {
-    color: #8899aa;
+    color: #8b949e;
   }
 
   /* Gradient text utility */
   .gradient-text {
-    background: linear-gradient(135deg, #0088ff, #ffd700);
+    background: linear-gradient(135deg, #388bfd, #fbbc04);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -120,8 +131,15 @@
 
   /* Glowing border */
   .glow-border {
-    border: 1px solid rgba(0, 136, 255, 0.4);
-    box-shadow: 0 0 14px rgba(0, 136, 255, 0.15);
+    border: 1px solid rgba(26, 115, 232, 0.4);
+    box-shadow: 0 0 16px rgba(26, 115, 232, 0.2);
+  }
+
+  /* Shimmer skeleton utility */
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
   }
 }
 

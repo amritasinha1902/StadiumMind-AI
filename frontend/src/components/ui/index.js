@@ -5,3 +5,4 @@ export { default as Modal }                                         from './Moda
 export { default as Spinner, FullPageSpinner }                      from './Spinner';
 export { default as Input }                                         from './Input';
 export { default as Avatar }                                        from './Avatar';
+export { default as Skeleton, CardSkeleton, ListSkeleton }          from './Skeleton';

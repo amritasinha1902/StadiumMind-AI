@@ -104,9 +104,9 @@ class SupervisorAgent:
         if not agents_to_run:
             agents_to_run = ["fan"]
 
-        # Emergency override: if emergency is one of the intents, prioritize it first
-        if "emergency" in intents and "emergency" not in agents_to_run:
-            agents_to_run.insert(0, "emergency")
+        # Emergency prioritization override: if emergency is detected, focus strictly on emergency response to ensure immediate safety
+        if "emergency" in intents:
+            agents_to_run = ["emergency"]
 
         # 3. Execute sub-agents
         agent_responses = []

@@ -48,3 +48,10 @@ router.add_api_route(
     response_model=WeatherModel,
     summary="Update weather state trigger recommendation changes",
 )
+
+router.add_api_route(
+    "/simulation/speed",
+    digital_twin_api.set_simulation_speed,
+    methods=["POST"],
+    summary="Configure the simulation speed multiplier",
+)
