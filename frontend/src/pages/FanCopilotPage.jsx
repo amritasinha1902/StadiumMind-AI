@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Send, Mic, MicOff, Volume2, VolumeX, RefreshCw, Trash2, Copy,
   ThumbsUp, ThumbsDown, User, Heart, Sparkles, AlertTriangle, HelpCircle,
-  Car, Clock, Utensils, MapPin, ShieldAlert, Accessibility, Navigation, Globe, ListFilter
+  Car, Clock, Utensils, MapPin, ShieldAlert, Accessibility, Navigation, Globe, ListFilter, Eye
 } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
+
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
@@ -182,7 +183,7 @@ export default function FanCopilotPage() {
       }));
 
       const res = await multiAgentApi.chat(text, history, memoryContext);
-      
+
       // Save telemetry
       setTelemetryData({
         intents: res.intents,
@@ -240,7 +241,7 @@ export default function FanCopilotPage() {
           content: m.content
         }));
         const res = await multiAgentApi.chat(lastUserQuery.content, historyMapped, memoryContext);
-        
+
         setTelemetryData({
           intents: res.intents,
           chosen_agents: res.chosen_agents,
@@ -317,11 +318,10 @@ export default function FanCopilotPage() {
                         <button
                           key={pref.key}
                           onClick={() => handleTogglePreference(pref.key)}
-                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-sm transition-all ${
-                            preferences[pref.key]
-                              ? 'bg-nexus-primary/20 border-nexus-primary text-nexus-text font-semibold'
-                              : 'bg-nexus-surface border-nexus-border text-nexus-muted hover:text-nexus-text'
-                          }`}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl border text-sm transition-all ${preferences[pref.key]
+                            ? 'bg-nexus-primary/20 border-nexus-primary text-nexus-text font-semibold'
+                            : 'bg-nexus-surface border-nexus-border text-nexus-muted hover:text-nexus-text'
+                            }`}
                         >
                           <span className="flex items-center gap-2">
                             <Icon size={16} />
@@ -484,20 +484,18 @@ export default function FanCopilotPage() {
               key={index}
               className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'} animate-slide-up`}
             >
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                msg.role === 'user' ? 'bg-nexus-surface border border-nexus-border' : 'bg-primary-gradient'
-              }`}>
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-nexus-surface border border-nexus-border' : 'bg-primary-gradient'
+                }`}>
                 {msg.role === 'user' ? <User size={16} className="text-nexus-muted" /> : <Sparkles size={16} className="text-white" />}
               </div>
 
               <div className="max-w-[80%] space-y-1.5">
-                <div className={`relative px-4 py-3.5 rounded-2xl text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-nexus-primary text-white rounded-tr-none shadow-nexus border border-nexus-primary-dark/20'
-                    : msg.mode === 'emergency'
-                      ? 'bg-nexus-danger/10 border-2 border-nexus-danger text-nexus-text rounded-tl-none'
-                      : 'nexus-card rounded-tl-none text-nexus-text border border-nexus-border'
-                }`}>
+                <div className={`relative px-4 py-3.5 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
+                  ? 'bg-nexus-primary text-white rounded-tr-none shadow-nexus border border-nexus-primary-dark/20'
+                  : msg.mode === 'emergency'
+                    ? 'bg-nexus-danger/10 border-2 border-nexus-danger text-nexus-text rounded-tl-none'
+                    : 'nexus-card rounded-tl-none text-nexus-text border border-nexus-border'
+                  }`}>
                   <p className="whitespace-pre-line">{msg.content}</p>
 
                   {/* Actions on messages */}
@@ -609,11 +607,10 @@ export default function FanCopilotPage() {
                 <button
                   key={qa.label}
                   onClick={() => handleSend(qa.action)}
-                  className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border flex-shrink-0 transition-all ${
-                    qa.danger
-                      ? 'bg-nexus-danger/25 border-nexus-danger text-nexus-danger hover:bg-nexus-danger hover:text-white'
-                      : 'bg-nexus-surface border-nexus-border text-nexus-muted hover:text-nexus-text'
-                  }`}
+                  className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg border flex-shrink-0 transition-all ${qa.danger
+                    ? 'bg-nexus-danger/25 border-nexus-danger text-nexus-danger hover:bg-nexus-danger hover:text-white'
+                    : 'bg-nexus-surface border-nexus-border text-nexus-muted hover:text-nexus-text'
+                    }`}
                 >
                   <Icon size={12} />
                   {qa.label}

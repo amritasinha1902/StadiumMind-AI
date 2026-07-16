@@ -28,7 +28,7 @@ class MultiAgentService:
             memory.current_gate = f"Gate {gate_match.group(1).upper()}"
 
         # 2. Seat detection
-        seat_match = re.search(r"\bseat\s+(\w+)\b", q)
+        seat_match = re.search(r"\bseat\s*(?:number)?\s*(?:is)?\s*(?:in\s+)?#?([a-z]?\d+)\b", q)
         if seat_match:
             memory.seat_number = f"Seat {seat_match.group(1).upper()}"
 

@@ -1,19 +1,25 @@
 import { useState, useCallback, useRef } from 'react';
-import geminiService from '@/services/gemini';
+import { aiApi } from '@/services/api';
 
-/**
+/** 
  * One-shot content generation.
  */
 export function useGemini() {
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
   const [response, setResponse] = useState(null);
 
   const generate = useCallback(async (prompt, systemInstruction = null) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await geminiService.generateContent(prompt, systemInstruction);
+      const result = await aiApi.chat(
+        prompt,
+        [],
+        {}
+      );
+      setResponse(result.response);
+      return result.response;
       setResponse(result);
       return result;
     } catch (err) {
@@ -37,16 +43,8 @@ export function useGemini() {
  */
 export function useGeminiChat() {
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState(null);
-  const sessionRef              = useRef(null);
-
-  const ensureSession = useCallback(() => {
-    if (!sessionRef.current) {
-      sessionRef.current = geminiService.startChat();
-    }
-    return sessionRef.current;
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const sendMessage = useCallback(async (text) => {
     if (!text.trim()) return;
@@ -54,29 +52,64 @@ export function useGeminiChat() {
     setLoading(true);
     setError(null);
 
-    const userMessage = { role: 'user', content: text, timestamp: new Date() };
-    setMessages((prev) => [...prev, userMessage]);
+    const userMessage = {
+      role: "user",
+      content: text,
+      timestamp: new Date(),
+    };
+
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
     try {
-      const session = ensureSession();
-      const reply   = await session.sendMessage(text);
-      const aiMessage = { role: 'assistant', content: reply, timestamp: new Date() };
+      const history = updatedMessages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }));
+
+      const result = await aiApi.chat(
+        text,
+        history,
+        ""
+      );
+
+      const aiMessage = {
+        role: "assistant",
+        content: result.response,
+        timestamp: new Date(),
+      };
+
       setMessages((prev) => [...prev, aiMessage]);
-      return reply;
+
+      return result.response;
+
     } catch (err) {
+      console.error(err);
       setError(err.message);
-      setMessages((prev) => prev.filter((m) => m !== userMessage));
-      throw err;
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "Unable to contact AI backend.",
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
       setLoading(false);
     }
-  }, [ensureSession]);
+  }, [messages]);
 
   const clearChat = useCallback(() => {
-    sessionRef.current = null;
     setMessages([]);
     setError(null);
   }, []);
 
-  return { messages, sendMessage, loading, error, clearChat };
+  return {
+    messages,
+    sendMessage,
+    loading,
+    error,
+    clearChat,
+  };
 }

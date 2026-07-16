@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # Google Gemini
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-1.5-flash"
+    gemini_model: str = "gemini-3.5-flash"
     max_tokens: int = 2048
     temperature: float = 0.7
 
@@ -21,7 +21,12 @@ class Settings(BaseSettings):
     google_application_credentials: str = ""
 
     # CORS
-    cors_origins: List[str] = ["http://localhost:5173"]
+    cors_origins: List[str] = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    ]
 
     @field_validator("cors_origins", mode="before")
     @classmethod

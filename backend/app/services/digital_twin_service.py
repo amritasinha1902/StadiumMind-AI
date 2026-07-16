@@ -31,9 +31,6 @@ class DigitalTwinService:
         from mock_data.simulator import StadiumSimulator
         self.simulator = StadiumSimulator()
 
-    def _init_state(self) -> None:
-        pass
-
     async def get_status(self) -> TwinStatusResponse:
         # Trigger simulation update
         self.simulator.update()
@@ -151,17 +148,17 @@ class DigitalTwinService:
             ]
 
         return TwinStatusResponse(
-            weather=self._state["weather"],
-            incidents=self._state["incidents"],
-            crowd_gates=self._state["crowd_gates"],
-            volunteers=self._state["volunteers"],
-            medical_teams=self._state["medical_teams"],
-            food_courts=self._state["food_courts"],
-            transit=self._state["transit"],
+            weather=weather,
+            incidents=incidents,
+            crowd_gates=crowd_gates,
+            volunteers=volunteers,
+            medical_teams=medical_teams,
+            food_courts=food_courts,
+            transit=transit,
             operations_summary=ops_summary,
             crowd_predictions=predictions[:4],
             smart_alerts=alerts,
-        )
+            )
 
     async def get_navigation(self, request: NavigationRequest) -> NavigationResponse:
         path = ["Gate C", "Tactile Concourse Way", "Section 102 Lobby"]

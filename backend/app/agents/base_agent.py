@@ -1,4 +1,5 @@
 import time
+import traceback
 from typing import Any, Dict
 
 from app.ai.gemini_client import GeminiClient
@@ -76,8 +77,9 @@ class BaseAgent:
                 system_instruction=system_instruction,
             )
         except Exception as exc:
+            traceback.print_exc()
             logger.error("Agent %s failed response generation: %s", self.name, exc)
-            return f"[Agent {self.name} Fallback]: I received your request and am processing it, but am currently in fallback mode."
+            raise
 
     async def execute(self, message: str, context: Dict[str, Any]) -> Dict[str, Any]:
         """Execute input validation, response generation, and measure performance latency."""

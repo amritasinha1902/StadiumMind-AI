@@ -1,6 +1,9 @@
 import uuid
+import re
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+
+from app.agents.specialized_agents import SEAT_DATABASE, _extract_seat_code
 
 from app.ai.gemini_client import GeminiClient
 from app.models.fan_copilot import (
@@ -110,7 +113,17 @@ class FanCopilotService:
             elif "gate 7" in q:
                 response_text = "To reach Gate 7, take the elevator in Section 102 up to Level 2. Head left along the outer concourse. Gate 7 is approximately 60 meters ahead on the left side."
             elif "seat" in q:
-                response_text = "Your seating sector is Section 102. Exit the elevator, turn right, and walk 15 meters. Tactile paving runs along the corridor for vis-impaired assistance."
+                # Use mock database check
+                context = {
+                    "gate": "None detected",
+                    "seat": None,
+                }
+                seat_code = _extract_seat_code(request.message, context)
+                if seat_code and seat_code in SEAT_DATABASE:
+                    seat_info = SEAT_DATABASE[seat_code]
+                    response_text = f"Your seating sector is {seat_info['section']}, {seat_info['row']}. Please proceed along the concourse walkway to reach it."
+                else:
+                    response_text = "The exact location of this seat is not available in the current stadium model. Please consult the nearest information desk or look at the overhead section maps."
             elif "washroom" in q or "toilet" in q:
                 response_text = "The nearest wheelchair-accessible washroom is located 10 meters behind you on your left, next to the main info kiosk. Walking time: 1 minute."
             elif "food" in q or "hungry" in q or "vegetarian" in q:

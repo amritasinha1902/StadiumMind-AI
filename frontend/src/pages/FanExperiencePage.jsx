@@ -1,4 +1,6 @@
 import { Users, MapPin, Utensils, Info, Navigation, Star, MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import PageHeader from '@/components/layout/PageHeader';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import Badge  from '@/components/ui/Badge';
@@ -21,6 +23,18 @@ const metrics = [
 ];
 
 export default function FanExperiencePage() {
+  const navigate = useNavigate();
+
+  const handleCardClick = (title) => {
+    if (title === 'Fan Moments') {
+      toast('Fan Moments feature coming soon.');
+    } else if (title === 'Match Information') {
+      navigate('/command-center');
+    } else {
+      navigate('/fan-copilot');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -32,7 +46,11 @@ export default function FanExperiencePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {services.map((svc) => (
-          <Card key={svc.title} hover>
+          <Card
+            key={svc.title}
+            onClick={() => handleCardClick(svc.title)}
+            className="cursor-pointer hover:border-nexus-primary/50 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(26,115,232,0.15)] transition-all duration-300"
+          >
             <div className="flex items-start justify-between mb-4">
               <div className="w-10 h-10 rounded-xl bg-nexus-primary/20 border border-nexus-primary/30 flex items-center justify-center">
                 <svc.icon size={18} className="text-nexus-primary-light" />

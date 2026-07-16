@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Play, Pause, RefreshCw, AlertTriangle, ShieldAlert,
   Thermometer, Sun, CloudRain, Navigation, MapPin, Eye,
-  Building, UserCheck, Flame, Loader2, PlusCircle, CheckCircle, Radio
+  Building, UserCheck, Flame, Loader2, PlusCircle, CheckCircle, Radio, Sparkles, Clock
 } from 'lucide-react';
 import PageHeader from '@/components/layout/PageHeader';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -468,17 +468,15 @@ export default function AIDigitalTwinPage() {
             <div className="absolute bottom-6 left-6 flex flex-wrap gap-1.5 max-w-[80%] bg-nexus-surface/90 backdrop-blur-md p-2 rounded-xl border border-nexus-border">
               <button
                 onClick={() => setShowCrowd(!showCrowd)}
-                className={`text-[10px] px-2.5 py-1 rounded-md transition-all ${
-                  showCrowd ? 'bg-nexus-primary text-white' : 'text-nexus-muted hover:text-nexus-text'
-                }`}
+                className={`text-[10px] px-2.5 py-1 rounded-md transition-all ${showCrowd ? 'bg-nexus-primary text-white' : 'text-nexus-muted hover:text-nexus-text'
+                  }`}
               >
                 Crowd Dots
               </button>
               <button
                 onClick={() => setShowResponders(!showResponders)}
-                className={`text-[10px] px-2.5 py-1 rounded-md transition-all ${
-                  showResponders ? 'bg-nexus-primary text-white' : 'text-nexus-muted hover:text-nexus-text'
-                }`}
+                className={`text-[10px] px-2.5 py-1 rounded-md transition-all ${showResponders ? 'bg-nexus-primary text-white' : 'text-nexus-muted hover:text-nexus-text'
+                  }`}
               >
                 Responders
               </button>
@@ -666,11 +664,10 @@ export default function AIDigitalTwinPage() {
                   <button
                     key={w}
                     onClick={() => handleWeatherChange(w)}
-                    className={`p-1.5 rounded border text-xs capitalize ${
-                      weather.status === w
-                        ? 'bg-nexus-primary text-white border-nexus-primary'
-                        : 'bg-nexus-surface border-nexus-border text-nexus-muted hover:text-nexus-text'
-                    }`}
+                    className={`p-1.5 rounded border text-xs capitalize ${weather.status === w
+                      ? 'bg-nexus-primary text-white border-nexus-primary'
+                      : 'bg-nexus-surface border-nexus-border text-nexus-muted hover:text-nexus-text'
+                      }`}
                   >
                     {w}
                   </button>
@@ -693,11 +690,10 @@ export default function AIDigitalTwinPage() {
                   <div
                     key={inc.incident_id}
                     onClick={() => setSelectedIncident(inc)}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer ${
-                      selectedIncident?.incident_id === inc.incident_id
-                        ? 'bg-nexus-danger/20 border-nexus-danger'
-                        : 'bg-nexus-surface2/60 border-nexus-border/50 hover:bg-nexus-border/30'
-                    }`}
+                    className={`p-3 rounded-xl border transition-all cursor-pointer ${selectedIncident?.incident_id === inc.incident_id
+                      ? 'bg-nexus-danger/20 border-nexus-danger'
+                      : 'bg-nexus-surface2/60 border-nexus-border/50 hover:bg-nexus-border/30'
+                      }`}
                   >
                     <div className="flex justify-between items-start mb-1">
                       <span className="text-xs font-semibold text-nexus-text capitalize">{inc.type.replace('_', ' ')}</span>

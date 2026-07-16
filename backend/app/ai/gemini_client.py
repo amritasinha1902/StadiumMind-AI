@@ -55,16 +55,16 @@ class GeminiClient:
     async def generate(
         self,
         prompt: str,
-        system_instruction: Optional[str] = None,
-    ) -> str:
-        """Generate a single-turn text response."""
-        try:
-            model = self._build_model(system_instruction)
-            response = await self._call_with_retry(model.generate_content_async, prompt)
-            return response.text
-        except Exception as exc:
-            logger.error("Gemini generate error after retries: %s", exc)
-            raise
+        system_instruction: str | None = None,
+        ) -> str:
+        print("KEY:", settings.gemini_api_key[:8])
+        
+        model = self._build_model(system_instruction)
+        
+        response = model.generate_content(prompt)
+        print("SUCCESS")
+        
+        return response.text
 
     async def chat(
         self,

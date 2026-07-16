@@ -1,4 +1,5 @@
 import { Trophy, Users, AlertCircle, Zap, Activity, CheckCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/layout/PageHeader';
 import StatCard   from '@/components/shared/StatCard';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -26,6 +27,7 @@ const feedIcon = {
 };
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   return (
     <div className="space-y-6">
       <PageHeader
@@ -37,7 +39,31 @@ export default function DashboardPage() {
 
       {/* KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {stats.map((s) => <StatCard key={s.title} {...s} />)}
+        {stats.map((s) => {
+          const navigationPaths = {
+            'Active Fans': '/fan-experience',
+            'Open Incidents': '/security',
+            'Volunteers On Duty': '/volunteers',
+          };
+          const path = navigationPaths[s.title];
+          
+          if (path) {
+            return (
+              <div
+                key={s.title}
+                onClick={() => navigate(path)}
+                className="cursor-pointer"
+              >
+                <StatCard
+                  {...s}
+                  className="hover:border-nexus-primary/50 hover:shadow-[0_8px_32px_rgba(26,115,232,0.15)] cursor-pointer"
+                />
+              </div>
+            );
+          }
+          
+          return <StatCard key={s.title} {...s} />;
+        })}
       </div>
 
       {/* Activity + sidebar */}
@@ -76,7 +102,10 @@ export default function DashboardPage() {
 
         {/* Right column */}
         <div className="space-y-4">
-          <Card>
+          <Card
+            onClick={() => navigate('/command-center')}
+            className="cursor-pointer hover:border-nexus-primary/50 hover:shadow-[0_8px_32px_rgba(26,115,232,0.15)] transition-all duration-300"
+          >
             <CardHeader><CardTitle>Live Match</CardTitle></CardHeader>
             <CardContent>
               <div className="text-center py-2">
@@ -89,7 +118,10 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card
+            onClick={() => navigate('/command-center')}
+            className="cursor-pointer hover:border-nexus-primary/50 hover:shadow-[0_8px_32px_rgba(26,115,232,0.15)] transition-all duration-300"
+          >
             <CardHeader><CardTitle>Quick Stats</CardTitle></CardHeader>
             <CardContent>
               <div className="space-y-2">
